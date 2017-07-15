@@ -1,8 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { GamesList } from './GamesList';
+import { fetchGames } from '../actions';
 
 class GamesPage extends React.Component {
+  componentDidMount() {
+    this.props.fetchGames();
+  }
+
   render() {
     return (
       <div>
@@ -19,4 +24,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps)(GamesPage);
+export default connect(mapStateToProps, { fetchGames })(GamesPage);
