@@ -1,17 +1,33 @@
 import React from 'react';
 import classnames from 'classnames';
 import { connect } from 'react-redux';
-import { saveGame } from '../actions';
+import { saveGame, fetchGame, updateGame } from '../actions';
 import { Redirect } from 'react-router-dom';
 
 class GamesForm extends React.Component {
   state = {
-    title: '',
-    cover: '',
+    _id: this.props.game ? this.props.game._id : null,
+    title: this.props.game ? this.props.game.title : '',
+    cover: this.props.game ? this.props.game.cover : '',
     errors: '',
     isLoading: false,
     done: false
   };
+
+  componentDidMount = () => {
+    if(this.props.match.params._id) {
+      this.props.fetchGame(this.props.match.params._id);
+    }
+  }
+
+  componentWillReceiveProps = (nextState) => {
+    console.log(nextState.game);
+    this.setState({
+      _id: nextState.game._id,
+      title: nextState.game.title,
+      cover: nextState.game.cover
+    })
+  }
 
   handleChange = (e) => {
     e.stopPropagation();
@@ -36,12 +52,19 @@ class GamesForm extends React.Component {
     this.setState({errors});
     const isValid = Object.keys(this.state.errors).length === 0
     if(isValid) {
-      const { title, cover } = this.state;
+      const { _id, title, cover } = this.state;
       this.setState({isLoading: true});
-      this.props.saveGame({ title, cover }).then(
-        () => {this.setState({ done: true })},
-        (err) => err.response.json().then(({errors}) => this.setState({errors, isLoading: false}))
-      );
+      if(_id){
+        this.props.updateGame({_id, title, cover}).then(
+          () => {this.setState({ done: true })},
+          (err) => err.response.json().then(({errors}) => this.setState({errors, isLoading: false}))
+        );
+      } else {
+        this.props.saveGame({ title, cover }).then(
+          () => {this.setState({ done: true })},
+          (err) => err.response.json().then(({errors}) => this.setState({errors, isLoading: false}))
+        );
+      }
     }
   }
   render() {
@@ -70,10 +93,13 @@ class GamesForm extends React.Component {
     );
   }
 }
-function mapStateToProps(state) {
-  this.props = {
-    title: state.title,
-    cover: state.cover
+function mapStateToProps(state, props) {
+  let _id = props.match.params._id
+  if(_id) {
+    return {
+      game: state.games.find(item => item._id === _id)
+    }
   }
+  return { game: null }
 }
-export default connect(mapStateToProps, { saveGame })(GamesForm);
+export default connect(mapStateToProps, { saveGame, fetchGame, updateGame })(GamesForm);
