@@ -38,6 +38,14 @@ mongodb.MongoClient.connect(dbUrl, function(err, db) {
     }
   })
 
+  // wait for delete request and delete from it from mongodb
+  app.delete('/api/games/:id', (req, res) => {
+    db.collection('games').deleteOne({_id: new mongodb.ObjectId(req.params.id)}, (err, r) => {
+      if(err) { res.status(500).json({errors: { global: err }}); return; }
+      res.json({})
+    })
+  })
+
   app.use((req, res) => {
     res.status(404).json({
       errors: {

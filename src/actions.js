@@ -1,4 +1,5 @@
 export const SET_GAMES = 'SET_GAMES';
+export const GAME_DELETED = 'GAME_DELETED';
 
 function handleResponse(res) {
   if(res.ok) {
@@ -21,6 +22,27 @@ export function setGames(games) {
   return {
     type: SET_GAMES,
     games
+  }
+}
+
+// send delete game request
+export function deleteGame(id) {
+  return dispatch => {
+    return fetch(`/api/games/${id}`, {
+      method: 'delete',
+      header: {
+        "Content-Type": "application/json"
+      }
+    }).then(handleResponse)
+    .then(data => dispatch(gameDeleted(id)))
+  }
+}
+
+// delete game form react state
+export function gameDeleted(gameId) {
+  return {
+    type: GAME_DELETED,
+    gameId
   }
 }
 

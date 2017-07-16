@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { GamesList } from './GamesList';
-import { fetchGames } from '../actions';
+import { fetchGames, deleteGame } from '../actions';
 
 class GamesPage extends React.Component {
   componentDidMount() {
@@ -12,7 +12,7 @@ class GamesPage extends React.Component {
     return (
       <div>
         <h1>Games List</h1>
-        <GamesList games={this.props.games}></GamesList>
+        <GamesList games={this.props.games} deleteGame={this.props.deleteGame}></GamesList>
       </div>
     )
   }
@@ -24,4 +24,4 @@ function mapStateToProps(state) {
   }
 }
 
-export default connect(mapStateToProps, { fetchGames })(GamesPage);
+export default connect(mapStateToProps, { fetchGames, deleteGame })(GamesPage);
