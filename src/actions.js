@@ -28,7 +28,7 @@ export function saveGame(game) {
   return dispatch => {
     return fetch('/api/games', {
       method: 'post',
-      heanders: {
+      headers: {
         'Accept': 'application/json, text/plain, */*',
         'Content-Type': 'application/json'
       },
